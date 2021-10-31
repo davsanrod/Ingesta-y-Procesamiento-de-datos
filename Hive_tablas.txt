@@ -1,0 +1,63 @@
+#Tabla estaciones
+
+CREATE EXTERNAL TABLE estacionesbatch(
+activate Int,
+address String,
+dock_bikes Int,
+free_bases Int,
+id Int,
+latitude Double,
+light Int,
+longitude Double,
+name String,
+no_available Int,
+number String,
+reservations_count Int,
+total_bases Int)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ','
+STORED AS TEXTFILE;
+
+#Tabla movements:
+
+CREATE EXTERNAL TABLE movementsbatch (
+id String,
+idplug_base Int,
+ageRange Int,
+idplug_station Int,
+travel_time Int,
+user_day_code String,
+user_type Int,
+zip_code String)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ','
+STORED AS TEXTFILE;
+
+#Tabla externa bicicletas API:
+
+CREATE EXTERNAL TABLE bmadgo_api (data string);
+
+CREATE TABLE bmadgo AS
+SELECT
+get_json_object(data, '$.station') station,
+get_json_object(data, '$.porcBattery') porcBattery,
+get_json_object(data, '$.Speed') speed,
+get_json_object(data, '$.state') state
+FROM bmadgo_api;
+
+#Tabla externa estacionesAPI:
+
+CREATE EXTERNAL TABLE estaciones_api (data string);
+
+CREATE TABLE estacionesAPI AS
+SELECT
+get_json_object(data, '$.id') id,
+get_json_object(data, '$.name') name,
+get_json_object(data, '$.Light') Light,
+get_json_object(data, '$.no_available') no_available
+get_json_object(data, '$.activate') activate,
+get_json_object(data, '$.address') address,
+get_json_object(data, '$.free_bases') free_bases,
+get_json_object(data, '$total_bases') total_bases,
+get_json_object(data, '$.number') number,
+FROM bmadgo_api;

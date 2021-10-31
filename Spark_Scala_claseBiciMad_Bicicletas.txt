@@ -1,0 +1,36 @@
+package ejercicios.RDD
+
+import org.apache.log4j.{Level, Logger}
+import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.functions.{col, explode}
+
+object api_bicicletas {
+
+  def main(args: Array[String]): Unit = {
+
+    val logger = Logger.getLogger("org.apache.spark")
+    logger.setLevel(Level.ERROR)
+    val logger2 = Logger.getLogger("akka")
+    logger2.setLevel(Level.ERROR)
+    val logger3 = Logger.getLogger("akka")
+    logger3.setLevel(Level.ERROR)
+
+    //Crear SparkSession
+    val spark = SparkSession
+      .builder()
+      .appName("procesamiento_api1")
+      .getOrCreate()
+
+    val sc = spark.sparkContext
+
+    val api = spark.read.format("json").load("hdfs:///user/dsanchez/bicicletasAPI")
+
+    val proc = api.select(col("station"), col("porcBattery"), col("Speed"),
+      col("base"), col("station"), col("state"))
+
+    proc.write.format("json")
+      .mode("overwrite")
+      .option("path", "hdfs:///user/dsanchez/bicicletasAPI")
+      .save()
+  }
+}

@@ -1,0 +1,27 @@
+# Estaciones con mas bases libres para estacionar
+
+SELECT name, (free_bases) as estaciones libres
+FROM estacionesbatch
+GROUP BY name
+ORDER BY free_bases DESC
+LIMIT 15;
+
+
+#Estaciones con bicicletas que alcanzan mayor velocidad
+
+SELECT DISTINCT estacionesAPI.NAME as estaciones, 
+	bimadgo.speed as speed 
+FROM bimadgo INNER JOIN estacionesAPI
+ON bmadgo.station = estacionesAPI.id 
+ORDER BY estacionesAPI.name
+LIMIT 10;
+
+
+#Estaciones con bicicletas con baterias completas
+
+SELECT DISTINCT estacionesAPI.NAME as estaciones, 
+	bimadgo.speed as speed 
+FROM bimadgo INNER JOIN estacionesAPI
+ON bmadgo.station = estacionesAPI.id 
+ORDER BY estacionesAPI.name
+LIMIT 10;

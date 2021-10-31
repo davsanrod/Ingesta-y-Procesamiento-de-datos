@@ -1,0 +1,46 @@
+package ejercicios.RDD
+
+import org.apache.log4j.{Level, Logger}
+import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.functions.{col, explode}
+
+object BiciMad_estaciones_V2 {
+
+  def main(args: Array[String]): Unit = {
+
+    //Con los siguientes códigos Logger evitamos que salgan por pantalla
+    //varias lineas de errores.
+    val logger = Logger.getLogger("org.apache.spark")
+    logger.setLevel(Level.ERROR)
+    val logger2 = Logger.getLogger("akka")
+    logger2.setLevel(Level.ERROR)
+    val logger3 = Logger.getLogger("akka")
+    logger3.setLevel(Level.ERROR)
+
+    //Crear SparkSession
+    val spark = SparkSession
+      .builder()
+      .appName("procesamiento_estaciones")
+      .master("local")
+      .getOrCreate()
+
+    val sc = spark.sparkContext
+
+    //Lectura
+    val datosBiciMad = spark.read.format("json")
+      .option("inferSchema", "True")
+      .option("mode", "failFast")
+      .load(path = "/user/dsanchez/estaciones/FlumeData.1635588470977.tmp")
+
+    val bicimad = datosBiciMad.select(col("_idplug_base"), col("ageRange"),
+      col("idplub_station"), col("idplug_base"), col("travel_time"),
+      col("unplug_station"),
+      col("user_day_code"), col("user_type"))
+
+    bicimad.write
+      .option("header", "false")
+      .mode("overwrite")
+      .csv("/user/dsanchez/estaciones/proc_estaciones")
+  }
+
+}

@@ -1,0 +1,37 @@
+package ejercicios.RDD
+
+import org.apache.log4j.{Level, Logger}
+import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.functions.col
+
+object api_estaciones {
+
+  def main(args: Array[String]): Unit = {
+
+    val logger = Logger.getLogger("org.apache.spark")
+    logger.setLevel(Level.ERROR)
+    val logger2 = Logger.getLogger("akka")
+    logger2.setLevel(Level.ERROR)
+    val logger3 = Logger.getLogger("akka")
+    logger3.setLevel(Level.ERROR)
+
+    //Crear SparkSession
+    val spark = SparkSession
+      .builder()
+      .appName("procesamiento_api2")
+      .getOrCreate()
+
+    val sc = spark.sparkContext
+
+    val api = spark.read.format("json").load("hdfs:///user/dsanchez/estacionesAPI")
+
+    val proc = api.select(col("id"), col("name"), col("light"),
+      col("no_available"), col("activate"), col("address"),
+      col("free_bases"), col("total_bases"), col("number"))
+
+    proc.write.format("json")
+      .mode("overwrite")
+      .option("path", "hdfs:///user/dsanchez/estacionesAPI")
+      .save()
+  }
+}

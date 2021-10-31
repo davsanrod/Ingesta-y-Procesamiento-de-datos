@@ -1,0 +1,32 @@
+#Name the components on this agent
+agente.sources = spooldir-source  
+agente.channels = memory-channel
+agente.sinks = hdfs-sink
+
+# Describe/configure Source
+agente.sources.spooldir-source.type = spooldir
+agente.sources.spooldir-source.spoolDir = /home/dsanchez/BiciMad/bicicletas/
+agente.sources.spooldir-source.basenameHeader = true
+agente.sources.spooldir-source.interceptors = i1
+agente.sources.spooldir-source.interceptors.i1.type = timestamp
+agente.sources.spooldir-source.deserializer.maxLineLength = 13000
+
+# Configure the Channel
+agente.channels.memory-channel.type = memory     
+agente.channels.memory-channel.capacity = 1000
+agente.channels.memory-channel.transactionCapacity = 100
+
+# Configure the Sink
+agente.sinks.hdfs-sink.type = hdfs
+agente.sinks.hdfs-sink.hdfs.path = bicicletas
+agente.sinks.hdfs-sink.hdfs.rollInterval = 30
+agente.sinks.hdfs-sink.hdfs.rollSize = 0
+agente.sinks.hdfs-sink.hdfs.rollCount = 0
+agente.sinks.hdfs-sink.hdfs.writeFormat = Text
+agente.sinks.hdfs-sink.hdfs.fileType = DataStream
+
+# Bind the source and the sink to the channel
+agente.sources.spooldir-source.channels = memory-channel
+agente.sinks.hdfs-sink.channel = memory-channel
+~
+~
